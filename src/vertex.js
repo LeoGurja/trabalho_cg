@@ -1,13 +1,15 @@
 class Vertex {
-	constructor(coordinates) {
-		this.coordinates = coordinates
+	constructor({ x, y, z }) {
+		this.x = x
+		this.y = y
+		this.z = z
 	}
 
 	getCoordinates() {
-		return this.coordinates
+		return { x: this.x, y: this.y, z: this.z }
 	}
 
 	getWithoutZ(mult = 1) {
-		return { x: this.coordinates.x * mult, y: this.coordinates.y * mult }
+		return { x: this.x * mult, y: this.y * mult }
 	}
 }

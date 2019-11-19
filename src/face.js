@@ -1,6 +1,7 @@
 class Face {
 	constructor(vertices) {
 		this.vertices = vertices
+		this.center = this._center()
 		this.vector = null
 	}
 
@@ -18,19 +19,18 @@ class Face {
 	}
 
 	createVector(polyhedronCenter) {
-		const faceCenter = this.center()
-		this.vector = new Vector(polyhedronCenter, faceCenter)
+		this.vector = new Vector(polyhedronCenter, this.center)
 	}
 
-	center() {
+	_center() {
 		const averages = {
 			x: 0,
 			y: 0,
 			z: 0
 		}
 
-		for (const vertex in this.vertices) {
-			const { x, y, z } = vertex.getCoordinates()
+		for (const index in this.vertices) {
+			const { x, y, z } = this.vertices[index]
 			averages.x += x
 			averages.y += y
 			averages.z += z
