@@ -1,0 +1,24 @@
+class Vector {
+	constructor(start, end) {
+		this.x = end.x - start.x
+		this.y = end.y - start.y
+		this.z = end.z - start.z
+	}
+
+	angle(vector) {
+		// returns the angle between two vector in radians between 0 and π
+		const cosine = this.times(vector) / (this.magnitude() * vector.magnitude())
+		const angle = Math.acos(cosine)
+		if (isNaN(angle)) throw new Error(`${cosine} is not a valid cosine`)
+
+		return angle
+	}
+
+	times(vector) {
+		return (this.x * vector.x + this.y * vector.y + this.z * vector.z)
+	}
+
+	magnitude() {
+		return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2)
+	}
+}
