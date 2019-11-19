@@ -19,14 +19,14 @@ class Face {
 
     draw(ctx, mult=1) {
         const arr = [];
-        for (let i = 0; i < Object.keys(this.vertices).length; i++) {
-            arr.push(Object.values(this.vertices)[i].getWithoutZ(mult))
+        for (const vertex in this.vertices) {
+            arr.push(this.vertices[vertex].getWithoutZ(mult))
         }
         ctx.beginPath()
         ctx.moveTo(arr[0].x, arr[0].y)
-        ctx.lineTo(arr[1].x, arr[1].y)
-        ctx.lineTo(arr[2].x, arr[2].y)
-        ctx.lineTo(arr[3].x, arr[3].y)
+        for (let i = 1; i < arr.length; i++) {
+            ctx.lineTo(arr[i].x, arr[i].y)      
+        }
         ctx.fill()
     }
 }
@@ -37,8 +37,8 @@ class Polyhedron {
     }
 
     draw(ctx, mult=1) {
-        for (let i = 0; i < Object.keys(this.faces).length; i++) {
-            Object.values(this.faces)[i].draw(ctx, mult)
+        for (const face in this.faces) {
+            this.faces[face].draw(ctx, mult)
         }
     }
 }
