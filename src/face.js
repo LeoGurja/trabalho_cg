@@ -1,25 +1,36 @@
 class Face {
+	/**
+	 *
+	 * @param {Vertex[]} vertices
+	 */
 	constructor(vertices) {
 		this.vertices = vertices
-		this.center = this._center()
 		this.vector = null
 	}
 
-	draw(ctx, mult = 1) {
-		const arr = []
-		for (const vertex in this.vertices) {
-			arr.push(this.vertices[vertex].getWithoutZ(mult))
-		}
+	/**
+	 *  @param {CanvasRenderingContext2D} ctx canvas context
+	 *  @param {Vertex} pos polyhedron's position
+	 */
+	draw(ctx, pos, mult = 1) {
 		ctx.beginPath()
-		ctx.moveTo(arr[0].x, arr[0].y)
-		for (let i = 1; i < arr.length; i++) {
-			ctx.lineTo(arr[i].x, arr[i].y)
-		}
+		ctx.moveTo((this.vertices[0].x * mult) + pos.x, (this.vertices[0].y * mult) + pos.y)
+		this.vertices.forEach(vertex => {
+			ctx.lineTo((vertex.x * mult) + pos.x, (vertex.y * mult) + pos.y)
+		})
+		ctx.closePath()
+		ctx.stroke()
 		ctx.fill()
 	}
 
 	createVector(polyhedronCenter) {
-		this.vector = new Vector(polyhedronCenter, this.center)
+		this.vector = new Vector(polyhedronCenter, this._center())
+	}
+
+	translate(dx, dy, dz) {
+		this.vertices.forEach(vertex => {
+			vertex.translate(dx, dy, dz)
+		})
 	}
 
 	_center() {
@@ -29,13 +40,11 @@ class Face {
 			z: 0
 		}
 
-		for (const index in this.vertices) {
-			const { x, y, z } = this.vertices[index]
+		this.vertices.forEach(({ x, y, z }) => {
 			averages.x += x
 			averages.y += y
 			averages.z += z
-		}
-
+		})
 		return new Vertex({
 			x: averages.x / this.vertices.length,
 			y: averages.y / this.vertices.length,

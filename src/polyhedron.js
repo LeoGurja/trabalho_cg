@@ -1,18 +1,24 @@
 class Polyhedron {
-	constructor(faces) {
+	/**
+	 *
+	 * @param {Face[]} faces polyhedron's faces
+	 * @param {Vertex} position initial position
+	 */
+	constructor(faces, position = new Vertex({ x: 0, y: 0, z: 0 })) {
 		this.faces = faces
-		this.center = this._center()
-		for (const index in this.faces) {
-			const face = this.faces[index]
-			face.createVector(this.center)
-		}
+		this.pos = position
+		const center = this._center()
+		this.faces.forEach(face => {
+			// criar o vetor que indica o lado da frente da face
+			face.createVector(center)
+		})
 	}
 
 	draw(ctx, mult = 1) {
-		for (const index in this.faces) {
-			const face = this.faces[index]
-			face.draw(ctx, mult)
-		}
+		this.faces.sort((a, b) => b._center().z - a._center().z)
+		this.faces.forEach(face => {
+			face.draw(ctx, this.pos, mult)
+		})
 	}
 
 	_center() {
@@ -22,14 +28,12 @@ class Polyhedron {
 			z: 0
 		}
 
-		for (const index in this.faces) {
-			const face = this.faces[index]
-
-			const { x, y, z } = face.center
+		this.faces.forEach(face => {
+			const { x, y, z } = face._center()
 			averages.x += x
 			averages.y += y
 			averages.z += z
-		}
+		})
 
 		return new Vertex({
 			x: averages.x / this.faces.length,
