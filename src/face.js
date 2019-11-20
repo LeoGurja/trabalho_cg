@@ -27,9 +27,9 @@ class Face {
 		this.vector = new Vector(polyhedronCenter, this._center())
 	}
 
-	translate(dx, dy, dz) {
+	translate(x, y, z) {
 		this.vertices.forEach(vertex => {
-			vertex.translate(dx, dy, dz)
+			vertex.translate(x, y, z)
 		})
 	}
 

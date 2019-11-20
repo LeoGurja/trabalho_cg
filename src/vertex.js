@@ -17,39 +17,49 @@ class Vertex {
 		return { x: this.x * mult, y: this.y * mult }
 	}
 
-	translate(dx = 0, dy = 0, dz = 0) {
-		this.x += dx
-		this.y += dy
-		this.z += dz
+	translate(x = 0, y = 0, z = 0) {
+		this.x += x
+		this.y += y
+		this.z += z
 	}
 
-	scale(scaleX = 1, scaleY = 1, scaleZ = 1) {
-		this.x *= scaleX
-		this.y *= scaleY
-		this.z *= scaleZ
+	scale(coordinate, value) {
+		this[coordinate] *= value
 	}
 
-	rotate(dx, dy, dz) {
+	rotate(x, y, z) {
 		// TODO: review method
-		this.y = Math.cos(dx) * this.y - Math.sin(dx) * this.z
-		this.z = Math.sin(dx) * this.y + Math.cos(dx) * this.z
+		this.y = Math.cos(x) * this.y - Math.sin(x) * this.z
+		this.z = Math.sin(x) * this.y + Math.cos(x) * this.z
 
-		this.x = Math.cos(dy) * this.x + Math.sin(dy) * this.z
-		this.z = Math.cos(dy) * this.z - Math.sin(dy) * this.x
+		this.x = Math.cos(y) * this.x + Math.sin(y) * this.z
+		this.z = Math.cos(y) * this.z - Math.sin(y) * this.x
 
-		this.x = Math.cos(dz) * this.x - Math.sin(dz) * this.y
-		this.y = Math.sin(dz) * this.x + Math.cos(dz) * this.y
+		this.x = Math.cos(z) * this.x - Math.sin(z) * this.y
+		this.y = Math.sin(z) * this.x + Math.cos(z) * this.y
 	}
 
-	static translate(vertex, dx = 0, dy = 0, dz = 0) {
-		return new Vertex(vertex.x + dx, vertex.y + dy, vertex.z + dz)
+	static translate(vertex, x = 0, y = 0, z = 0) {
+		return new Vertex(vertex.x + x, vertex.y + y, vertex.z + z)
 	}
 
-	static scale(vertex, scaleX = 1, scaleY = 1, scaleZ = 1) {
-		return new Vertex(vertex.x * scaleX, vertex.y * scaleY, vertex.z * scaleZ)
+	static scale(vertex, x = 1, y = 1, z = 1) {
+		return new Vertex(vertex.x * x, vertex.y * y, vertex.z * z)
 	}
 
-	isBelowGround(pos) {
-		return ((this.y + pos.y) >= canvas.height)
+	didCollide(coordinate, pos, speed) {
+		const c = {
+			x: canvas.width,
+			y: canvas.height,
+			z: Infinity
+		}
+		const position = this[coordinate] + pos[coordinate]
+
+		if (speed[coordinate] === 0) return false
+		if (speed[coordinate] > 0) {
+			return position > c[coordinate]
+		} else {
+			return position < 0
+		}
 	}
 }
