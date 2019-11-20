@@ -48,4 +48,8 @@ class Vertex {
 	static scale(vertex, scaleX = 1, scaleY = 1, scaleZ = 1) {
 		return new Vertex(vertex.x * scaleX, vertex.y * scaleY, vertex.z * scaleZ)
 	}
+
+	isBelowGround(pos) {
+		return ((this.y + pos.y) >= canvas.height)
+	}
 }

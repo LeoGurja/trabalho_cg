@@ -1,12 +1,14 @@
 class Polyhedron {
 	/**
-	 *
+	 * @param {Vertex[]} vertices polyhedron's vertices
 	 * @param {Face[]} faces polyhedron's faces
 	 * @param {Vertex} position initial position
 	 */
-	constructor(faces, position = new Vertex({ x: 0, y: 0, z: 0 })) {
+	constructor(vertices, faces, position = new Vertex({ x: 0, y: 0, z: 0 })) {
+		this.vertices = vertices
 		this.faces = faces
 		this.pos = position
+		this.speed = { x: 0, y: 0, z: 0 }
 		const center = this._center()
 		this.faces.forEach(face => {
 			// criar o vetor que indica o lado da frente da face
@@ -43,6 +45,31 @@ class Polyhedron {
 	}
 
 	update() {
+		this.fall()
+		this.move()
+	}
 
+	move() {
+		this.pos.x += this.speed.x
+		this.pos.y += this.speed.y
+		this.pos.z += this.speed.z
+	}
+
+	fall() {
+		const gravity = 0.1
+
+		this.speed.y += gravity
+		this.pos.y += this.speed.y
+
+		if (this.isBelowGround()) this.bounce()
+	}
+
+	bounce() {
+		this.speed.y *= -1
+	}
+
+	isBelowGround() {
+		const result = this.vertices.some(vertex => vertex.isBelowGround(this.pos))
+		return result
 	}
 }

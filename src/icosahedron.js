@@ -2,18 +2,18 @@ class Icosahedron extends Polyhedron {
 	constructor(position = new Vertex({ x: 0, y: 0, z: 0 })) {
 		const vertices =
 		[
-			new Vertex({ x: 0.000, y: 0.000, z: 1.000 }),
-			new Vertex({ x: 0.894, y: 0.000, z: 0.447 }),
-			new Vertex({ x: 0.276, y: 0.851, z: 0.447 }),
-			new Vertex({ x: -0.724, y: 0.526, z: 0.447 }),
-			new Vertex({ x: -0.724, y: -0.526, z: 0.447 }),
-			new Vertex({ x: 0.276, y: -0.851, z: 0.447 }),
-			new Vertex({ x: 0.724, y: 0.526, z: -0.447 }),
-			new Vertex({ x: -0.276, y: 0.851, z: -0.447 }),
-			new Vertex({ x: -0.894, y: 0.000, z: -0.447 }),
-			new Vertex({ x: -0.276, y: -0.851, z: -0.447 }),
-			new Vertex({ x: 0.724, y: -0.526, z: -0.447 }),
-			new Vertex({ x: 0.000, y: 0.000, z: -1.000 })
+			new Vertex({ x: 0, y: 0, z: 100 }),
+			new Vertex({ x: 89.4, y: 0, z: 44.7 }),
+			new Vertex({ x: 27.6, y: 85.1, z: 44.7 }),
+			new Vertex({ x: -72.4, y: 52.6, z: 44.7 }),
+			new Vertex({ x: -72.4, y: -52.6, z: 44.7 }),
+			new Vertex({ x: 27.6, y: -85.1, z: 44.7 }),
+			new Vertex({ x: 72.4, y: 52.6, z: -44.7 }),
+			new Vertex({ x: -27.6, y: 85.1, z: -44.7 }),
+			new Vertex({ x: -89.4, y: 0, z: -44.7 }),
+			new Vertex({ x: -27.6, y: -85.1, z: -44.7 }),
+			new Vertex({ x: 72.4, y: -52.6, z: -44.7 }),
+			new Vertex({ x: 0, y: 0, z: -100 })
 		]
 
 		const faces = [
@@ -38,6 +38,6 @@ class Icosahedron extends Polyhedron {
 			new Face([vertices[9], vertices[10], vertices[5]]),
 			new Face([vertices[10], vertices[6], vertices[1]])
 		]
-		super(faces, position)
+		super(vertices, faces, position)
 	}
 }

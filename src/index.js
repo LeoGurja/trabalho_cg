@@ -34,12 +34,13 @@ polyhedrons.forEach(p => {
 	})
 })
 */
+
 function render() {
 	context.clearRect(0, 0, canvas.width, canvas.height)
 
 	polyhedrons.forEach(p => {
 		p.update()
-		p.draw(context, 300)
+		p.draw(context)
 	})
 	requestAnimationFrame(render)
 }
