@@ -45,4 +45,16 @@ class Polyhedron {
 	update() {
 
 	}
+
+	translate(x = 0, y = 0, z = 0) {
+		this.pos.x += x
+		this.pos.y += y
+		this.pos.z += z
+	}
+
+	scale(x = 1, y = 1, z = 1) {
+		this.pos.x *= x
+		this.pos.y *= y
+		this.pos.z *= z
+	}
 }
