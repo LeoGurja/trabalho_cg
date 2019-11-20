@@ -41,5 +41,8 @@ function render() {
 		p.update()
 		p.draw(context, 300)
 	})
+	console.log('as')
+	requestAnimationFrame(render)
 }
-setInterval(render, 1)
+
+render()
