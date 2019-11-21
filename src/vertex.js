@@ -7,6 +7,7 @@ class Vertex {
 		this.x = x
 		this.y = y
 		this.z = z
+		this.history = []
 	}
 
 	getCoordinates() {
@@ -24,7 +25,17 @@ class Vertex {
 	}
 
 	scale(coordinate, value) {
+		this.history.push({ x: this.x, y: this.y, z: this.z })
 		this[coordinate] *= value
+	}
+
+	rollBack() {
+		if (this.history.length === 0) return false
+		const { x, y, z } = this.history.pop()
+		this.x = x
+		this.y = y
+		this.z = z
+		return true
 	}
 
 	rotate(x, y, z) {

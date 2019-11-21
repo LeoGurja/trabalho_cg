@@ -10,7 +10,7 @@ class Polyhedron {
 		this.pos = position
 		this.speed = { x: 0, y: 0, z: 0 }
 
-		this.bounceRatio = 0.3
+		this.bounceRatio = 0.7
 		this.bounce = { x: 0, y: 0, z: 0 } // representa o valor já realizado do squash
 		this.bouncing = { x: 0, y: 0, z: 0 } // representa a fase atual do bounce de cada coordenada
 
@@ -50,6 +50,7 @@ class Polyhedron {
 	}
 
 	update() {
+		console.log(this.isBouncing())
 		if (this.isBouncing()) {
 			this.updateBounce()
 		} else {
@@ -62,29 +63,35 @@ class Polyhedron {
 		['x', 'y', 'z'].forEach(async(c) => {
 			this.pos[c] += this.speed[c]
 		})
-		this.speed.y += 0.1 // gravity
+		this.speed.y += 0.7 // gravity
 	}
 
 	testCollision() {
 		['x', 'y', 'z'].forEach(async(c) => {
-			if (this.didCollide(c)) this.bouncing[c] = 1 // começa um bounce nessa coordenada
+			if (this.didCollide(c)) {
+				this.bouncing[c] = 1 // começa um bounce nessa coordenada
+				this.bounce = { x: 0, y: 0, z: 0 }
+			}
 		})
 	}
 
 	updateBounce() {
 		['x', 'y', 'z'].forEach(c => {
 			if (this.bounce[c] >= this.bounceRatio) this.bouncing[c] = 2 // início da fase 2
-			let bounceIncrement
-			if (this.bouncing[c] === 1) bounceIncrement = 0.1 * this.bounceRatio
-			else if (this.bouncing[c] === 2) bounceIncrement = -0.1 * this.bounceRatio
-			else return
 
-			this.bounce[c] += bounceIncrement
-			this.squash(c, 1 - bounceIncrement)
+			if (this.bouncing[c] === 1) {
+				const bounceIncrement = 0.3 * this.bounceRatio
+				this.bounce[c] += bounceIncrement
+				this.squash(c, 1 - bounceIncrement)
+				return
+			}
 
-			if (this.bounce[c] <= 0) { // fim do bounce
-				this.bouncing[c] = 0
-				this.speed[c] *= -1
+			if (this.bouncing[c] === 2) {
+				const success = this.rollBack()
+				if (!success) { // fim do bounce
+					this.bouncing[c] = 0
+					this.speed[c] *= -0.97
+				}
 			}
 		})
 	}
@@ -96,6 +103,10 @@ class Polyhedron {
 
 	squash(coordinate, value) {
 		this.vertices.forEach(vertex => vertex.scale(coordinate, value))
+	}
+
+	rollBack() {
+		return !this.vertices.some(vertex => !vertex.rollBack())
 	}
 
 	isBouncing() {
