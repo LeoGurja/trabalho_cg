@@ -1,5 +1,7 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
+canvas.width = document.body.clientWidth
+canvas.height = document.body.clientHeight
 context.fillStyle = '#463c8c'
 context.lineWidth = 2
 context.lineJoin = context.lineCap = 'round'
