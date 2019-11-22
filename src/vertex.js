@@ -26,9 +26,21 @@ export default class Vertex {
 		this.z += z
 	}
 
-	scale(coordinate, value) {
-		this.history.push({ x: this.x, y: this.y, z: this.z })
-		this[coordinate] *= value
+	scale(value) {
+		this.history.push({ x: this.x, y: this.y, z: this.z });
+		['x', 'y', 'z'].forEach(c => {
+			this[c] *= value
+		})
+	}
+
+	squash(center, value) {
+		this.history.push({ x: this.x, y: this.y, z: this.z });
+
+		['x', 'y', 'z'].forEach(c => {
+			this[c] -= center[c]
+			this[c] *= value
+			this[c] += center[c]
+		})
 	}
 
 	rollBack() {

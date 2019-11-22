@@ -11,9 +11,10 @@ export default class Polyhedron {
 		this.vertices = vertices
 		this.faces = faces
 		this.pos = position
-		this.speed = { x: 2, y: 0, z: 0 }
+		this.speed = { x: 10, y: 0, z: 0 }
 		this.phi = 0
 		this.theta = 0
+		this.collisionVertex = null
 
 		this.bounceRatio = 0.5
 		this.bounce = { x: 0, y: 0, z: 0 } // representa o valor já realizado do squash
@@ -80,7 +81,7 @@ export default class Polyhedron {
 		['x', 'y', 'z'].forEach(async(c) => {
 			this.pos[c] += this.speed[c]
 		})
-		this.speed.y += 0.7 // gravity
+		this.speed.y += 0.3 // gravity
 	}
 
 	testCollision() {
@@ -97,9 +98,9 @@ export default class Polyhedron {
 			if (this.bounce[c] >= this.bounceRatio) this.bouncing[c] = 2 // início da fase 2
 
 			if (this.bouncing[c] === 1) {
-				const bounceIncrement = 0.4 * this.bounceRatio
+				const bounceIncrement = 0.05 * this.bounceRatio
 				this.bounce[c] += bounceIncrement
-				this.squash(c, 1 - bounceIncrement)
+				this.squash(1 - bounceIncrement)
 				return
 			}
 
@@ -114,12 +115,17 @@ export default class Polyhedron {
 	}
 
 	didCollide(coordinate) {
-		const result = this.vertices.some(vertex => vertex.didCollide(coordinate, this.pos, this.speed))
-		return result
+		return this.vertices.some(vertex => {
+			if (vertex.didCollide(coordinate, this.pos, this.speed)) {
+				this.collisionVertex = vertex
+				return true
+			}
+			return false
+		})
 	}
 
-	squash(coordinate, value) {
-		this.vertices.forEach(vertex => vertex.scale(coordinate, value))
+	squash(value) {
+		this.vertices.forEach(vertex => vertex.squash(this.collisionVertex, value))
 	}
 
 	rollBack() {
