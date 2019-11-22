@@ -1,5 +1,9 @@
-class Icosahedron extends Polyhedron {
-	constructor(position = new Vertex({ x: 0, y: 0, z: 0 })) {
+import Polyhedron from './polyhedron.js'
+import Vertex from './vertex.js'
+import Face from './face.js'
+
+export default class Icosahedron extends Polyhedron {
+	constructor(position = new Vertex({ x: 0, y: 0, z: 100 })) {
 		const vertices =
 		[
 			new Vertex({ x: 0, y: 0, z: 100 }),

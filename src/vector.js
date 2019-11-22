@@ -1,4 +1,4 @@
-class Vector {
+export default class Vector {
 	constructor(start, end) {
 		this.x = end.x - start.x
 		this.y = end.y - start.y
@@ -7,10 +7,11 @@ class Vector {
 
 	angle(vector) {
 		// returns the angle between two vector in radians between 0 and π
-		const cosine = this.times(vector) / (this.magnitude() * vector.magnitude())
-		const angle = Math.acos(cosine)
+		let cosine = this.times(vector) / (this.magnitude() * vector.magnitude())
+		if (cosine < -1) cosine = -1
+		let angle = Math.acos(cosine)
 		if (isNaN(angle)) throw new Error(`${cosine} is not a valid cosine`)
-
+		angle = 180 * angle / Math.PI
 		return angle
 	}
 

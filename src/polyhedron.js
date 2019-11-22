@@ -1,4 +1,7 @@
-class Polyhedron {
+import Face from './face.js'
+import Vertex from './vertex.js'
+
+export default class Polyhedron {
 	/**
 	 * @param {Vertex[]} vertices polyhedron's vertices
 	 * @param {Face[]} faces polyhedron's faces
@@ -8,9 +11,9 @@ class Polyhedron {
 		this.vertices = vertices
 		this.faces = faces
 		this.pos = position
-		this.speed = { x: 0, y: 0, z: 0 }
+		this.speed = { x: 2, y: 0, z: 0 }
 
-		this.bounceRatio = 0.7
+		this.bounceRatio = 0.5
 		this.bounce = { x: 0, y: 0, z: 0 } // representa o valor já realizado do squash
 		this.bouncing = { x: 0, y: 0, z: 0 } // representa a fase atual do bounce de cada coordenada
 
@@ -50,13 +53,13 @@ class Polyhedron {
 	}
 
 	update() {
-		console.log(this.isBouncing())
 		if (this.isBouncing()) {
 			this.updateBounce()
 		} else {
 			this.testCollision()
 			this.move()
 		}
+		this.faces.forEach(face => face.updateColor(this.pos))
 	}
 
 	move() {
@@ -80,7 +83,7 @@ class Polyhedron {
 			if (this.bounce[c] >= this.bounceRatio) this.bouncing[c] = 2 // início da fase 2
 
 			if (this.bouncing[c] === 1) {
-				const bounceIncrement = 0.3 * this.bounceRatio
+				const bounceIncrement = 0.4 * this.bounceRatio
 				this.bounce[c] += bounceIncrement
 				this.squash(c, 1 - bounceIncrement)
 				return

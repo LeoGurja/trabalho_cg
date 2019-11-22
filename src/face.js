@@ -1,4 +1,7 @@
-class Face {
+import Vertex from './vertex.js'
+import Vector from './vector.js'
+
+export default class Face {
 	/**
 	 *
 	 * @param {Vertex[]} vertices
@@ -6,6 +9,7 @@ class Face {
 	constructor(vertices) {
 		this.vertices = vertices
 		this.vector = null
+		this.color = 'rgba(70,60,140,1)'
 	}
 
 	/**
@@ -20,6 +24,7 @@ class Face {
 		})
 		ctx.closePath()
 		ctx.stroke()
+		ctx.fillStyle = this.color
 		ctx.fill()
 	}
 
@@ -27,10 +32,21 @@ class Face {
 		this.vector = new Vector(polyhedronCenter, this._center())
 	}
 
+	generateColorFromAngle(angle) {
+		if (angle >= 180) return { r: 0, g: 0, b: 0 }
+		return { r: Math.floor(185 - angle), g: Math.floor(175 - angle), b: Math.floor(255 - angle) }
+	}
+
 	translate(x, y, z) {
 		this.vertices.forEach(vertex => {
 			vertex.translate(x, y, z)
 		})
+	}
+
+	updateColor(position) {
+		const angle = this.vector.angle(new Vector(this._center(), { x: -position.x, y: -position.y, z: -position.z }))
+		const color = this.generateColorFromAngle(angle)
+		this.color = `rgba(${color.r},${color.g},${color.b},1)`
 	}
 
 	_center() {

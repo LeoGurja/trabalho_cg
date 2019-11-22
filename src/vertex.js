@@ -1,4 +1,6 @@
-class Vertex {
+import { canvas } from './index.js'
+
+export default class Vertex {
 	/**
 	 * @param {{x: Number, y: Number, z: Number}} coordinates
 	 */
