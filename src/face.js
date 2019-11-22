@@ -49,6 +49,11 @@ export default class Face {
 		this.color = `rgba(${color.r},${color.g},${color.b},1)`
 	}
 
+	rotate(phi, theta) {
+		const rotatedVerts = this.vertices.map(vertex => vertex.rotate(phi, theta))
+		return new Face(rotatedVerts)
+	}
+
 	_center() {
 		const averages = {
 			x: 0,

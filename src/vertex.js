@@ -40,16 +40,17 @@ export default class Vertex {
 		return true
 	}
 
-	rotate(x, y, z) {
-		// TODO: review method
-		this.y = Math.cos(x) * this.y - Math.sin(x) * this.z
-		this.z = Math.sin(x) * this.y + Math.cos(x) * this.z
+	rotate(phi, theta) {
+		const cphi = Math.cos(phi)
+		const sphi = Math.sin(phi)
+		const ctheta = Math.cos(theta)
+		const stheta = Math.sin(theta)
 
-		this.x = Math.cos(y) * this.x + Math.sin(y) * this.z
-		this.z = Math.cos(y) * this.z - Math.sin(y) * this.x
-
-		this.x = Math.cos(z) * this.x - Math.sin(z) * this.y
-		this.y = Math.sin(z) * this.x + Math.cos(z) * this.y
+		const z = this.z * ctheta + this.y * stheta
+		let y = this.y * ctheta - this.z * stheta
+		const x = this.x * cphi - y * sphi
+		y = y * cphi + this.x * sphi
+		return new Vertex({ x, y, z })
 	}
 
 	static translate(vertex, x = 0, y = 0, z = 0) {

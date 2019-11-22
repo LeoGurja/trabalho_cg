@@ -12,6 +12,8 @@ export default class Polyhedron {
 		this.faces = faces
 		this.pos = position
 		this.speed = { x: 2, y: 0, z: 0 }
+		this.phi = 0
+		this.theta = 0
 
 		this.bounceRatio = 0.5
 		this.bounce = { x: 0, y: 0, z: 0 } // representa o valor já realizado do squash
@@ -25,8 +27,12 @@ export default class Polyhedron {
 	}
 
 	draw(ctx, mult = 1) {
-		this.faces.sort((a, b) => b._center().z - a._center().z)
-		this.faces.forEach(face => {
+		const rotatedFaces = this.faces.map(face => face.rotate(this.phi, this.theta))
+		const center = this._center()
+		rotatedFaces.sort((a, b) => b._center().z - a._center().z)
+		rotatedFaces.forEach(face => {
+			face.createVector(center)
+			face.updateColor(this.pos)
 			face.draw(ctx, this.pos, mult)
 		})
 	}
@@ -53,6 +59,7 @@ export default class Polyhedron {
 	}
 
 	update() {
+		this.rotate()
 		if (this.isBouncing()) {
 			this.updateBounce()
 		} else {
@@ -60,6 +67,13 @@ export default class Polyhedron {
 			this.move()
 		}
 		this.faces.forEach(face => face.updateColor(this.pos))
+	}
+
+	rotate() {
+		this.phi += 0.009
+		this.theta += 0.01
+		this.rotation += this.rotateSpeed
+		if (this.rotation >= Math.PI) this.rotation -= Math.PI
 	}
 
 	move() {
