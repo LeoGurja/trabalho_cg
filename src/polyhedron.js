@@ -10,30 +10,20 @@ export default class Polyhedron {
 	constructor(vertices, faces, position = new Vertex({ x: 0, y: 0, z: 0 })) {
 		this.vertices = vertices
 		this.faces = faces
+		this.transformed = faces
 		this.pos = position
-		this.speed = { x: 10, y: 0, z: 0 }
+		this.speed = { x: 30, y: 0, z: 0 }
 		this.phi = 0
 		this.theta = 0
 		this.collisionVertex = null
 
-		this.bounceRatio = 0.5
+		this.bounceRatio = 0.2
 		this.bounce = { x: 0, y: 0, z: 0 } // representa o valor já realizado do squash
 		this.bouncing = { x: 0, y: 0, z: 0 } // representa a fase atual do bounce de cada coordenada
-
-		const center = this._center()
-		this.faces.forEach(face => {
-			// criar o vetor que indica o lado da frente da face
-			face.createVector(center)
-		})
 	}
 
 	draw(ctx, mult = 1) {
-		const rotatedFaces = this.faces.map(face => face.rotate(this.phi, this.theta))
-		const center = this._center()
-		rotatedFaces.sort((a, b) => b._center().z - a._center().z)
-		rotatedFaces.forEach(face => {
-			face.createVector(center)
-			face.updateColor(this.pos)
+		this.transformed.forEach(face => {
 			face.draw(ctx, this.pos, mult)
 		})
 	}
@@ -67,14 +57,19 @@ export default class Polyhedron {
 			this.testCollision()
 			this.move()
 		}
-		this.faces.forEach(face => face.updateColor(this.pos))
+		this.transformed.forEach(face => face.updateColor(this.pos))
 	}
 
 	rotate() {
 		this.phi += 0.009
 		this.theta += 0.01
-		this.rotation += this.rotateSpeed
-		if (this.rotation >= Math.PI) this.rotation -= Math.PI
+		const center = this._center()
+
+		this.transformed = this.faces.map(face => face.rotate(this.phi, this.theta))
+		this.transformed.sort((a, b) => b._center().z - a._center().z)
+		this.transformed.forEach(face => {
+			face.createVector(center)
+		})
 	}
 
 	move() {
@@ -98,7 +93,7 @@ export default class Polyhedron {
 			if (this.bounce[c] >= this.bounceRatio) this.bouncing[c] = 2 // início da fase 2
 
 			if (this.bouncing[c] === 1) {
-				const bounceIncrement = 0.05 * this.bounceRatio
+				const bounceIncrement = 0.5 * this.bounceRatio
 				this.bounce[c] += bounceIncrement
 				this.squash(1 - bounceIncrement)
 				return
@@ -115,12 +110,11 @@ export default class Polyhedron {
 	}
 
 	didCollide(coordinate) {
-		return this.vertices.some(vertex => {
-			if (vertex.didCollide(coordinate, this.pos, this.speed)) {
-				this.collisionVertex = vertex
-				return true
-			}
-			return false
+		return this.transformed.some(face => {
+			const collisionPoint = face.didCollide(coordinate, this.pos, this.speed)
+			if (!collisionPoint) return false
+			this.collisionVertex = collisionPoint
+			return true
 		})
 	}
 

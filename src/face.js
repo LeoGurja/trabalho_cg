@@ -28,6 +28,18 @@ export default class Face {
 		ctx.fill()
 	}
 
+	didCollide(coordinate, position, speed){
+		let collisionPoint = null
+		this.vertices.some(vertex => {
+			if (vertex.didCollide(coordinate, position, speed)) {
+				collisionPoint = new Vertex(vertex)
+				return true
+			}
+			return false
+		})
+		return collisionPoint
+	}
+
 	createVector(polyhedronCenter) {
 		this.vector = new Vector(polyhedronCenter, this._center())
 	}
