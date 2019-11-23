@@ -12,7 +12,7 @@ export default class Polyhedron {
 		this.faces = faces
 		this.transformed = faces
 		this.pos = position
-		this.speed = { x: 30, y: 0, z: 0 }
+		this.speed = { x: 20, y: 0, z: 0 }
 		this.phi = 0
 		this.theta = 0
 		this.collisionVertex = null
