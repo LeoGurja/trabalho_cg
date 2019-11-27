@@ -1,5 +1,7 @@
+
 import Face from './face.js'
 import Vertex from './vertex.js'
+import Vector from './vector.js'
 
 export default class Polyhedron {
 	/**
@@ -13,6 +15,7 @@ export default class Polyhedron {
 		this.transformed = faces
 		this.pos = position
 		this.speed = { x: 20, y: 0, z: 0 }
+		this.accel = { x: 0, y: 0.3, z: 0 }
 		this.phi = 0
 		this.theta = 0
 		this.collisionVertex = null
@@ -20,11 +23,16 @@ export default class Polyhedron {
 		this.bounceRatio = 0.2
 		this.bounce = { x: 0, y: 0, z: 0 } // representa o valor já realizado do squash
 		this.bouncing = { x: 0, y: 0, z: 0 } // representa a fase atual do bounce de cada coordenada
+
+		this.deformation = 0
+		this.deformationSpeed = 0
+
+		this.goingToCenter = false
 	}
 
-	draw(ctx, mult = 1) {
+	draw(ctx, mult = 1, curved) {
 		this.transformed.forEach(face => {
-			face.draw(ctx, this.pos, mult)
+			face.draw(ctx, this.pos, mult, this.deformation)
 		})
 	}
 
@@ -51,6 +59,7 @@ export default class Polyhedron {
 
 	update() {
 		this.rotate()
+		this.deformFaces()
 		if (this.isBouncing()) {
 			this.updateBounce()
 		} else {
@@ -73,10 +82,34 @@ export default class Polyhedron {
 	}
 
 	move() {
+		if (this.goingToCenter) {
+			this.pos.x += 0.05 * this.vectorToCenter.x
+			this.pos.y += 0.05 * this.vectorToCenter.y
+			this.vectorToCenter.x -= 0.05 * this.vectorToCenter.x
+			this.vectorToCenter.y -= 0.05 * this.vectorToCenter.y
+			return
+		}
 		['x', 'y', 'z'].forEach(async(c) => {
 			this.pos[c] += this.speed[c]
+			this.speed[c] += this.accel[c]
 		})
-		this.speed.y += 0.3 // gravity
+	}
+
+	stopOnTheMiddle(screenWidth, screenHeight) {
+		this.speed = { x: 0, y: 0, z: 0 }
+		this.accel = { x: 0, y: 0, z: 0 }
+		this.deformationSpeed = 0.1
+		this.goingToCenter = true
+		this.vectorToCenter = this.getVectorToCenter(screenWidth, screenHeight)
+	}
+
+	getVectorToCenter(screenWidth, screenHeight) {
+		return new Vector(this.pos, { x: screenWidth / 2, y: screenHeight / 2, z: 100 })
+	}
+
+	deformFaces() {
+		this.deformation += this.deformationSpeed
+		if (this.deformation >= 3 || this.deformation <= 0) this.deformationSpeed *= -1
 	}
 
 	testCollision() {

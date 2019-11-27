@@ -15,17 +15,33 @@ export default class Face {
 	/**
 	 *  @param {CanvasRenderingContext2D} ctx canvas context
 	 *  @param {Vertex} pos polyhedron's position
+	 *  @param {Number} deformation
 	 */
-	draw(ctx, pos, mult = 1) {
+	draw(ctx, pos, mult = 1, deformation) {
 		ctx.beginPath()
-		ctx.moveTo((this.vertices[0].x * mult) + pos.x, (this.vertices[0].y * mult) + pos.y)
-		this.vertices.forEach(vertex => {
-			ctx.lineTo((vertex.x * mult) + pos.x, (vertex.y * mult) + pos.y)
-		})
+		ctx.moveTo((this.vertices[this.vertices.length - 1].x * mult) + pos.x, (this.vertices[this.vertices.length - 1].y * mult) + pos.y)
+		if (deformation !== 0) {
+			this.vertices.forEach(vertex => {
+				const controlPoint = this.getControlPoint(vertex, deformation)
+				ctx.quadraticCurveTo(controlPoint.x * mult + pos.x, controlPoint.y * mult + pos.y, (vertex.x * mult) + pos.x, (vertex.y * mult) + pos.y)
+			})
+		} else {
+			this.vertices.forEach(vertex => {
+				ctx.lineTo((vertex.x * mult) + pos.x, (vertex.y * mult) + pos.y)
+			})
+		}
 		ctx.closePath()
 		ctx.stroke()
 		ctx.fillStyle = this.color
 		ctx.fill()
+	}
+
+	getControlPoint(vertex, deformation) {
+		const center = this._center()
+		return {
+			x: (deformation * (this.vector.x + center.x) + vertex.x) / (deformation + 1),
+			y: (deformation * (this.vector.y + center.y) + vertex.y) / (deformation + 1)
+		}
 	}
 
 	didCollide(coordinate, position, speed) {
