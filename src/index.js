@@ -30,5 +30,9 @@ render()
 setTimeout(() => {
 	polyhedrons.forEach(p => {
 		p.stopOnTheMiddle(canvas.width, canvas.height)
+		document.title = "Trabalho 2"
+		const label = document.querySelector("h2")
+		label.innerText = "Trabalho 2"
+		label.style.color = "#00FF00"
 	})
 }, 10000)
