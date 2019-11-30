@@ -77,7 +77,7 @@ export default class Vertex {
 		const c = {
 			x: canvas.width,
 			y: canvas.height,
-			z: Infinity
+			z: 1000
 		}
 		const position = this[coordinate] + pos[coordinate]
 

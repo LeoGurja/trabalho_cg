@@ -1,5 +1,6 @@
 import Vertex from './vertex.js'
 import Vector from './vector.js'
+import hsl2rgb from './color.js'
 
 export default class Face {
 	/**
@@ -9,7 +10,7 @@ export default class Face {
 	constructor(vertices) {
 		this.vertices = vertices
 		this.vector = null
-		this.color = 'rgba(70,60,140,1)'
+		this.color = { H: 248, S: 0.4, L: 0.392 }
 	}
 
 	/**
@@ -17,7 +18,7 @@ export default class Face {
 	 *  @param {Vertex} pos polyhedron's position
 	 *  @param {Number} deformation
 	 */
-	draw(ctx, pos, mult = 1, deformation) {
+	draw(ctx, pos, mult = 1,deformation) {
 		ctx.beginPath()
 		ctx.moveTo((this.vertices[this.vertices.length - 1].x * mult) + pos.x, (this.vertices[this.vertices.length - 1].y * mult) + pos.y)
 		if (deformation !== 0) {
@@ -32,7 +33,7 @@ export default class Face {
 		}
 		ctx.closePath()
 		ctx.stroke()
-		ctx.fillStyle = this.color
+		ctx.fillStyle = hsl2rgb(this.color)
 		ctx.fill()
 	}
 
@@ -60,11 +61,6 @@ export default class Face {
 		this.vector = new Vector(polyhedronCenter, this._center())
 	}
 
-	generateColorFromAngle(angle) {
-		if (angle >= 180) return { r: 0, g: 0, b: 0 }
-		return { r: Math.floor(185 - angle), g: Math.floor(175 - angle), b: Math.floor(255 - angle) }
-	}
-
 	translate(x, y, z) {
 		this.vertices.forEach(vertex => {
 			vertex.translate(x, y, z)
@@ -72,9 +68,9 @@ export default class Face {
 	}
 
 	updateColor(position) {
-		const angle = this.vector.angle(new Vector(this._center(), { x: -position.x, y: -position.y, z: -position.z }))
-		const color = this.generateColorFromAngle(angle)
-		this.color = `rgba(${color.r},${color.g},${color.b},1)`
+		const angle = this.vector.angle(new Vector(this._center(), { x: -position.x, y: -position.y, z: -position.z-200 }))
+
+		this.color.L = Math.abs(1 - angle / 180)
 	}
 
 	rotate(phi, theta) {

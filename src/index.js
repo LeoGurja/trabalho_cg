@@ -11,28 +11,27 @@ context.lineJoin = context.lineCap = 'round'
 context.strokeStyle = '#000'
 
 // criar utilizando coordenadas locais do poliedro
-const polyhedrons = [
+const polyhedron = new Icosahedron(new Vertex({ x: 500, y: 300, z: 0 }))
 	// new Polyhedron([topFace, leftFace, frontFace, backFace, bottomFace, rightFace], new Vertex({ x: 500, y: 300, z: 100 })),
-	new Icosahedron(new Vertex({ x: 500, y: 300, z: 0 }))
-]
 
 function render() {
 	context.clearRect(0, 0, canvas.width, canvas.height)
 
-	polyhedrons.forEach(p => {
-		p.update()
-		p.draw(context, 1)
-	})
+	polyhedron.update()
+	polyhedron.draw(context, 1)
+
 	requestAnimationFrame(render)
 }
 
 render()
-setTimeout(() => {
-	polyhedrons.forEach(p => {
-		p.stopOnTheMiddle(canvas.width, canvas.height)
-		document.title = "Trabalho 2"
-		const label = document.querySelector("h2")
-		label.innerText = "Trabalho 2"
-		label.style.color = "#00FF00"
-	})
-}, 10000)
+
+document.querySelector('#toggleMovement').addEventListener("click", () => polyhedron.toggleMovement())
+document.querySelector('#toggleRotation').addEventListener("click", () => polyhedron.toggleRotation())
+document.querySelector('#toggleDeform').addEventListener("click", () => polyhedron.toggleDeform())
+document.querySelector('#moveToCenter').addEventListener("click", () => {
+	document.title = "Trabalho 2"
+	const label = document.querySelector("h2")
+	label.innerText = "Trabalho 2"
+	label.style.color = "#00FF00"
+	return polyhedron.toggleMode()
+})

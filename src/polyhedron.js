@@ -2,6 +2,7 @@
 import Face from './face.js'
 import Vertex from './vertex.js'
 import Vector from './vector.js'
+import { canvas } from './index.js'
 
 export default class Polyhedron {
 	/**
@@ -14,10 +15,12 @@ export default class Polyhedron {
 		this.faces = faces
 		this.transformed = faces
 		this.pos = position
-		this.speed = { x: 20, y: 0, z: 0 }
+		this.speed = { x: 20, y: 0, z: 5 }
 		this.accel = { x: 0, y: 0.3, z: 0 }
 		this.phi = 0
 		this.theta = 0
+		this.deltaPhi = 0.009
+		this.deltaTheta = 0.01
 		this.collisionVertex = null
 
 		this.bounceRatio = 0.2
@@ -31,6 +34,7 @@ export default class Polyhedron {
 	}
 
 	draw(ctx, mult = 1, curved) {
+		mult = (this.pos.z/1000 < 0.8) ? 2 - 2 * (this.pos.z/1000) : 0.4
 		this.transformed.forEach(face => {
 			face.draw(ctx, this.pos, mult, this.deformation)
 		})
@@ -70,8 +74,8 @@ export default class Polyhedron {
 	}
 
 	rotate() {
-		this.phi += 0.009
-		this.theta += 0.01
+		this.phi += this.deltaPhi
+		this.theta += this.deltaTheta
 		const center = this._center()
 
 		this.transformed = this.faces.map(face => face.rotate(this.phi, this.theta))
@@ -83,10 +87,12 @@ export default class Polyhedron {
 
 	move() {
 		if (this.goingToCenter) {
-			this.pos.x += 0.05 * this.vectorToCenter.x
-			this.pos.y += 0.05 * this.vectorToCenter.y
-			this.vectorToCenter.x -= 0.05 * this.vectorToCenter.x
-			this.vectorToCenter.y -= 0.05 * this.vectorToCenter.y
+			['x', 'y', 'z'].forEach(coordinate => {
+				this.pos[coordinate] += 0.05 * this.vectorToCenter[coordinate]
+
+				this.vectorToCenter[coordinate] -= 0.05 * this.vectorToCenter[coordinate]
+
+			})
 			return
 		}
 		['x', 'y', 'z'].forEach(async(c) => {
@@ -95,16 +101,14 @@ export default class Polyhedron {
 		})
 	}
 
-	stopOnTheMiddle(screenWidth, screenHeight) {
-		this.speed = { x: 0, y: 0, z: 0 }
-		this.accel = { x: 0, y: 0, z: 0 }
-		this.deformationSpeed = 0.1
-		this.goingToCenter = true
-		this.vectorToCenter = this.getVectorToCenter(screenWidth, screenHeight)
+	toggleMode() {
+		this.toggleDeform()
+		this.toggleMovement()
+		this.toggleRotation()
 	}
 
-	getVectorToCenter(screenWidth, screenHeight) {
-		return new Vector(this.pos, { x: screenWidth / 2, y: screenHeight / 2, z: 100 })
+	getVectorToCenter() {
+		return new Vector(this.pos, { x: canvas.width / 2, y: canvas.height / 2, z: 100 })
 	}
 
 	deformFaces() {
@@ -112,31 +116,61 @@ export default class Polyhedron {
 		if (this.deformation >= 3 || this.deformation <= 0) this.deformationSpeed *= -1
 	}
 
+	toggleMovement() {
+		if (this.accel.y !== 0) {
+			this.speed = { x: 0, y: 0, z: 0 }
+			this.accel = { x: 0, y: 0, z: 0 }
+			this.goingToCenter = true
+			this.vectorToCenter = this.getVectorToCenter()
+		} else {
+			this.speed = { x: 20, y: 0, z: 5 }
+			this.accel = { x: 0, y: 0.3, z: 0 }
+			this.goingToCenter = false
+		}
+	}
+
+	toggleDeform() {
+		if (this.deformationSpeed === 0) this.deformationSpeed = 0.03
+		else this.deformationSpeed = 0
+
+		this.deformation = 0
+	}
+
+	toggleRotation() {
+		if (this.deltaPhi !== 0){
+			this.deltaPhi = 0
+			this.deltaTheta = 0
+		} else {
+			this.deltaPhi = 0.009
+			this.deltaTheta = 0.01
+		}
+	}
+
 	testCollision() {
-		['x', 'y', 'z'].forEach(async(c) => {
-			if (this.didCollide(c)) {
-				this.bouncing[c] = 1 // começa um bounce nessa coordenada
+		['x', 'y', 'z'].forEach(async(coordinate) => {
+			if (this.didCollide(coordinate)) {
+				this.bouncing[coordinate] = 1 // começa um bounce nessa coordenada
 				this.bounce = { x: 0, y: 0, z: 0 }
 			}
 		})
 	}
 
 	updateBounce() {
-		['x', 'y', 'z'].forEach(c => {
-			if (this.bounce[c] >= this.bounceRatio) this.bouncing[c] = 2 // início da fase 2
+		['x', 'y', 'z'].forEach(coordinate => {
+			if (this.bounce[coordinate] >= this.bounceRatio) this.bouncing[coordinate] = 2 // início da fase 2
 
-			if (this.bouncing[c] === 1) {
+			if (this.bouncing[coordinate] === 1) {
 				const bounceIncrement = 0.5 * this.bounceRatio
-				this.bounce[c] += bounceIncrement
+				this.bounce[coordinate] += bounceIncrement
 				this.squash(1 - bounceIncrement)
 				return
 			}
 
-			if (this.bouncing[c] === 2) {
+			if (this.bouncing[coordinate] === 2) {
 				const success = this.rollBack()
 				if (!success) { // fim do bounce
-					this.bouncing[c] = 0
-					this.speed[c] *= -0.97
+					this.bouncing[coordinate] = 0
+					this.speed[coordinate] *= -0.97
 				}
 			}
 		})
