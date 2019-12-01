@@ -34,7 +34,7 @@ export default class Polyhedron {
 	}
 
 	draw(ctx, mult = 1, curved) {
-		mult = (this.pos.z/1000 < 0.8) ? 2 - 2 * (this.pos.z/1000) : 0.4
+		mult = (this.pos.z / 1000 < 0.8) ? 2 - 2 * (this.pos.z / 1000) : 0.4
 		this.transformed.forEach(face => {
 			face.draw(ctx, this.pos, mult, this.deformation)
 		})
@@ -91,7 +91,6 @@ export default class Polyhedron {
 				this.pos[coordinate] += 0.05 * this.vectorToCenter[coordinate]
 
 				this.vectorToCenter[coordinate] -= 0.05 * this.vectorToCenter[coordinate]
-
 			})
 			return
 		}
@@ -137,7 +136,7 @@ export default class Polyhedron {
 	}
 
 	toggleRotation() {
-		if (this.deltaPhi !== 0){
+		if (this.deltaPhi !== 0) {
 			this.deltaPhi = 0
 			this.deltaTheta = 0
 		} else {
