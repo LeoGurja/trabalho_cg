@@ -7,10 +7,10 @@ export default class Face {
 	 *
 	 * @param {Vertex[]} vertices
 	 */
-	constructor(vertices) {
+	constructor(vertices, color = { H: 248, S: 0.4, L: 0.392 }) {
 		this.vertices = vertices
 		this.vector = null
-		this.color = { H: 248, S: 0.4, L: 0.392 }
+		this.color = {...color}
 	}
 
 	/**

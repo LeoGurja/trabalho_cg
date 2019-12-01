@@ -13,11 +13,12 @@ export default class Room extends Polyhedron {
 		const backBottomLeft = new Vertex({ x: -width*0.7/2, y: height*0.7/2, z: depth/2 })
 		const backBottomRight = new Vertex({ x: width*0.7/2, y: height*0.7/2, z: depth/2 })
 
-		const backFace = new Face([backTopLeft, backTopRight, backBottomRight, backBottomLeft])
-		const leftFace = new Face([frontTopLeft, backTopLeft, backBottomLeft, frontBottomLeft])
-		const rightFace = new Face([frontTopRight, backTopRight, backBottomRight, frontBottomRight])
-		const bottomFace = new Face([frontBottomLeft, frontBottomRight, backBottomRight, backBottomLeft])
-		const topFace = new Face([frontTopLeft, frontTopRight, backTopRight, backTopLeft])
+		const color = {H: 0, S: 0, L: 1}
+		const backFace = new Face([backTopLeft, backTopRight, backBottomRight, backBottomLeft], color)
+		const leftFace = new Face([frontTopLeft, backTopLeft, backBottomLeft, frontBottomLeft], color)
+		const rightFace = new Face([frontTopRight, backTopRight, backBottomRight, frontBottomRight], color)
+		const bottomFace = new Face([frontBottomLeft, frontBottomRight, backBottomRight, backBottomLeft], color)
+		const topFace = new Face([frontTopLeft, frontTopRight, backTopRight, backTopLeft], color)
 
 		super([frontTopLeft, frontTopRight, frontBottomLeft, frontBottomRight, backTopLeft, backTopRight, backBottomLeft, backBottomRight],
 			[backFace, leftFace, rightFace, bottomFace, topFace],
