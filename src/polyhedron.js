@@ -30,7 +30,9 @@ export default class Polyhedron {
 		this.deformation = 0
 		this.deformationSpeed = 0
 
-		this.goingToCenter = false
+		this.moving = true
+		this.rotating = true
+		this.deforming = false
 	}
 
 	draw(ctx, mult = 1, curved) {
@@ -86,7 +88,7 @@ export default class Polyhedron {
 	}
 
 	move() {
-		if (this.goingToCenter) {
+		if (!this.moving) {
 			['x', 'y', 'z'].forEach(coordinate => {
 				this.pos[coordinate] += 0.05 * this.vectorToCenter[coordinate]
 
@@ -117,29 +119,35 @@ export default class Polyhedron {
 
 	toggleMovement() {
 		if (this.accel.y !== 0) {
+			this.moving = false
 			this.speed = { x: 0, y: 0, z: 0 }
 			this.accel = { x: 0, y: 0, z: 0 }
-			this.goingToCenter = true
 			this.vectorToCenter = this.getVectorToCenter()
 		} else {
+			this.moving = true
 			this.speed = { x: 20, y: 0, z: 5 }
 			this.accel = { x: 0, y: 0.3, z: 0 }
-			this.goingToCenter = false
 		}
 	}
 
 	toggleDeform() {
-		if (this.deformationSpeed === 0) this.deformationSpeed = 0.03
-		else this.deformationSpeed = 0
-
+		if (this.deformationSpeed === 0) {
+			this.deforming = true
+			this.deformationSpeed = 0.03
+		} else {
+			this.deforming = false
+			this.deformationSpeed = 0
+		}
 		this.deformation = 0
 	}
 
 	toggleRotation() {
 		if (this.deltaPhi !== 0) {
+			this.rotating = false
 			this.deltaPhi = 0
 			this.deltaTheta = 0
 		} else {
+			this.rotating = true
 			this.deltaPhi = 0.009
 			this.deltaTheta = 0.01
 		}
